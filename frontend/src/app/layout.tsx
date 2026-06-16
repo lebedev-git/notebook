@@ -8,12 +8,19 @@ import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { ConnectionGuard } from "@/components/common/ConnectionGuard";
 import { themeScript } from "@/lib/theme-script";
 import { I18nProvider } from "@/components/providers/I18nProvider";
+import { PWARegister } from "@/components/providers/PWARegister";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Open Notebook",
   description: "Privacy-focused research and knowledge management",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Open Notebook",
+  },
 };
 
 export default function RootLayout({
@@ -34,6 +41,7 @@ export default function RootLayout({
                 <ConnectionGuard>
                   {children}
                   <Toaster />
+                  <PWARegister />
                 </ConnectionGuard>
               </I18nProvider>
             </QueryProvider>
