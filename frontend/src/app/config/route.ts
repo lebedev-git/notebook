@@ -44,6 +44,19 @@ export async function GET(request: NextRequest) {
     const hostHeader = request.headers.get('host')
 
     if (hostHeader) {
+      // If we are behind a reverse proxy (accessed via port 80/443 or domain without port),
+      // we should use relative path to utilize Next.js rewrites.
+      // This avoids exposing port 5055 to the public internet and handles SSL automatically.
+      const hasPort = hostHeader.includes(':')
+      const isStandardPort = hostHeader.endsWith(':80') || hostHeader.endsWith(':443')
+
+      if (!hasPort || isStandardPort) {
+        console.log(`[runtime-config] Auto-detected reverse proxy (host=${hostHeader}). Using relative API path for Next.js Rewrites.`)
+        return NextResponse.json({
+          apiUrl: '',
+        })
+      }
+
       // Extract just the hostname (remove port if present)
       const hostname = hostHeader.split(':')[0]
 
