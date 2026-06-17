@@ -77,12 +77,12 @@ export function NotebookHeader({ notebook }: NotebookHeaderProps) {
             </div>
             <div className="flex gap-2">
               <Button
-                variant="outline"
+                variant={notebook.pinned ? "secondary" : "outline"}
                 size="sm"
                 onClick={handlePinToggle}
                 className={cn(
                   "transition-colors",
-                  notebook.pinned && "text-amber-500 border-amber-500/30 hover:bg-amber-500/10 hover:text-amber-600"
+                  notebook.pinned && "bg-secondary text-foreground border-foreground/20"
                 )}
               >
                 <Pin className={cn("h-4 w-4 mr-2 transition-transform duration-200", notebook.pinned && "fill-current rotate-45")} />

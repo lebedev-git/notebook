@@ -55,7 +55,7 @@ export function NotebookCard({ notebook }: NotebookCardProps) {
         className={cn(
           "group card-hover relative transition-all duration-300",
           notebook.pinned 
-            ? "border-amber-500/30 bg-amber-500/[0.02] shadow-[0_0_15px_rgba(245,158,11,0.03)]" 
+            ? "border-foreground/20 bg-muted/20 shadow-sm" 
             : ""
         )}
         onClick={handleCardClick}
@@ -81,8 +81,8 @@ export function NotebookCard({ notebook }: NotebookCardProps) {
                   className={cn(
                     "h-8 w-8 p-0 transition-all duration-200",
                     notebook.pinned 
-                      ? "opacity-100 text-amber-500 hover:text-amber-600 hover:bg-amber-500/10" 
-                      : "opacity-35 group-hover:opacity-100 text-muted-foreground hover:text-amber-500 hover:bg-amber-500/10"
+                      ? "opacity-100 text-foreground hover:bg-muted" 
+                      : "opacity-35 group-hover:opacity-100 text-muted-foreground hover:text-foreground hover:bg-muted"
                   )}
                   onClick={handlePinToggle}
                   title={notebook.pinned ? t('notebooks.unpin') : t('notebooks.pin')}

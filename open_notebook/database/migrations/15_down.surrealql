@@ -1,0 +1,2 @@
+-- Remove pinned field from notebook table
+REMOVE FIELD pinned ON TABLE notebook;
