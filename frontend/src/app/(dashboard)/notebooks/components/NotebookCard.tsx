@@ -52,7 +52,12 @@ export function NotebookCard({ notebook }: NotebookCardProps) {
   return (
     <>
       <Card 
-        className="group card-hover relative"
+        className={cn(
+          "group card-hover relative transition-all duration-300",
+          notebook.pinned 
+            ? "border-amber-500/30 bg-amber-500/[0.02] shadow-[0_0_15px_rgba(245,158,11,0.03)]" 
+            : ""
+        )}
         onClick={handleCardClick}
         style={{ cursor: 'pointer' }}
       >
@@ -74,12 +79,13 @@ export function NotebookCard({ notebook }: NotebookCardProps) {
                   variant="ghost"
                   size="sm"
                   className={cn(
-                    "h-8 w-8 p-0 transition-opacity duration-200",
+                    "h-8 w-8 p-0 transition-all duration-200",
                     notebook.pinned 
                       ? "opacity-100 text-amber-500 hover:text-amber-600 hover:bg-amber-500/10" 
-                      : "opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-amber-500 hover:bg-amber-500/10"
+                      : "opacity-35 group-hover:opacity-100 text-muted-foreground hover:text-amber-500 hover:bg-amber-500/10"
                   )}
                   onClick={handlePinToggle}
+                  title={notebook.pinned ? t('notebooks.unpin') : t('notebooks.pin')}
                 >
                   <Pin className={cn("h-4 w-4 transition-transform duration-200", notebook.pinned && "fill-current rotate-45")} />
                 </Button>
