@@ -5,7 +5,7 @@ import { NotebookResponse } from '@/lib/types/api'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { MoreHorizontal, Archive, ArchiveRestore, Trash2, FileText, StickyNote } from 'lucide-react'
+import { MoreHorizontal, Archive, ArchiveRestore, Trash2, FileText, StickyNote, Pin } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import {
   DropdownMenu,
@@ -18,6 +18,7 @@ import { NotebookDeleteDialog } from './NotebookDeleteDialog'
 import { useState } from 'react'
 import { useTranslation } from '@/lib/hooks/use-translation'
 import { getDateLocale } from '@/lib/utils/date-locale'
+import { cn } from '@/lib/utils'
 interface NotebookCardProps {
   notebook: NotebookResponse
 }
@@ -36,6 +37,14 @@ export function NotebookCard({ notebook }: NotebookCardProps) {
     })
   }
 
+  const handlePinToggle = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    updateNotebook.mutate({
+      id: notebook.id,
+      data: { pinned: !notebook.pinned }
+    })
+  }
+
   const handleCardClick = () => {
     router.push(`/notebooks/${encodeURIComponent(notebook.id)}`)
   }
@@ -43,12 +52,12 @@ export function NotebookCard({ notebook }: NotebookCardProps) {
   return (
     <>
       <Card 
-        className="group card-hover"
+        className="group card-hover relative"
         onClick={handleCardClick}
         style={{ cursor: 'pointer' }}
       >
           <CardHeader className="pb-3">
-            <div className="flex items-start justify-between">
+            <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
                 <CardTitle className="text-base truncate group-hover:text-primary transition-colors">
                   {notebook.name}
@@ -60,31 +69,50 @@ export function NotebookCard({ notebook }: NotebookCardProps) {
                 )}
               </div>
               
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-                  <DropdownMenuItem onClick={handleArchiveToggle}>
-                    {notebook.archived ? (
-                      <>
-                        <ArchiveRestore className="h-4 w-4 mr-2" />
-                        {t('notebooks.unarchive')}
-                      </>
-                    ) : (
-                      <>
-                        <Archive className="h-4 w-4 mr-2" />
-                        {t('notebooks.archive')}
-                      </>
-                    )}
-                  </DropdownMenuItem>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "h-8 w-8 p-0 transition-opacity duration-200",
+                    notebook.pinned 
+                      ? "opacity-100 text-amber-500 hover:text-amber-600 hover:bg-amber-500/10" 
+                      : "opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-amber-500 hover:bg-amber-500/10"
+                  )}
+                  onClick={handlePinToggle}
+                >
+                  <Pin className={cn("h-4 w-4 transition-transform duration-200", notebook.pinned && "fill-current rotate-45")} />
+                </Button>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenuItem onClick={handlePinToggle}>
+                      <Pin className="h-4 w-4 mr-2" />
+                      {notebook.pinned ? t('notebooks.unpin') : t('notebooks.pin')}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleArchiveToggle}>
+                      {notebook.archived ? (
+                        <>
+                          <ArchiveRestore className="h-4 w-4 mr-2" />
+                          {t('notebooks.unarchive')}
+                        </>
+                      ) : (
+                        <>
+                          <Archive className="h-4 w-4 mr-2" />
+                          {t('notebooks.archive')}
+                        </>
+                      )}
+                    </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={(e) => {
                       e.stopPropagation()
@@ -98,7 +126,8 @@ export function NotebookCard({ notebook }: NotebookCardProps) {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-          </CardHeader>
+          </div>
+        </CardHeader>
           
           <CardContent>
             <CardDescription className="line-clamp-2 text-sm">

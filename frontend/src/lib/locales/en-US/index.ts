@@ -260,6 +260,9 @@ export const enUS = {
     createSuccess: "Notebook created successfully",
     updateSuccess: "Notebook updated successfully",
     deleteSuccess: "Notebook deleted successfully",
+    pin: "Pin",
+    unpin: "Unpin",
+    pinnedNotebooks: "Pinned Notebooks",
   },
   sources: {
     title: "Sources",

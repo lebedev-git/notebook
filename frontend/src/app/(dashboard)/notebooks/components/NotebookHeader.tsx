@@ -4,13 +4,14 @@ import { useState } from 'react'
 import { NotebookResponse } from '@/lib/types/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Archive, ArchiveRestore, Trash2 } from 'lucide-react'
+import { Archive, ArchiveRestore, Trash2, Pin } from 'lucide-react'
 import { useUpdateNotebook } from '@/lib/hooks/use-notebooks'
 import { NotebookDeleteDialog } from './NotebookDeleteDialog'
 import { formatDistanceToNow } from 'date-fns'
 import { getDateLocale } from '@/lib/utils/date-locale'
 import { InlineEdit } from '@/components/common/InlineEdit'
 import { useTranslation } from '@/lib/hooks/use-translation'
+import { cn } from '@/lib/utils'
 
 interface NotebookHeaderProps {
   notebook: NotebookResponse
@@ -48,6 +49,13 @@ export function NotebookHeader({ notebook }: NotebookHeaderProps) {
     })
   }
 
+  const handlePinToggle = () => {
+    updateNotebook.mutate({
+      id: notebook.id,
+      data: { pinned: !notebook.pinned }
+    })
+  }
+
   return (
     <>
       <div className="border-b pb-6">
@@ -68,6 +76,18 @@ export function NotebookHeader({ notebook }: NotebookHeaderProps) {
               )}
             </div>
             <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handlePinToggle}
+                className={cn(
+                  "transition-colors",
+                  notebook.pinned && "text-amber-500 border-amber-500/30 hover:bg-amber-500/10 hover:text-amber-600"
+                )}
+              >
+                <Pin className={cn("h-4 w-4 mr-2 transition-transform duration-200", notebook.pinned && "fill-current rotate-45")} />
+                {notebook.pinned ? t('notebooks.unpin') : t('notebooks.pin')}
+              </Button>
               <Button
                 variant="outline"
                 size="sm"

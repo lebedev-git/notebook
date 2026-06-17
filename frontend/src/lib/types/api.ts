@@ -3,6 +3,7 @@ export interface NotebookResponse {
   name: string
   description: string
   archived: boolean
+  pinned: boolean
   created: string
   updated: string
   source_count: number
@@ -63,12 +64,14 @@ export interface SettingsResponse {
 export interface CreateNotebookRequest {
   name: string
   description?: string
+  pinned?: boolean
 }
 
 export interface UpdateNotebookRequest {
   name?: string
   description?: string
   archived?: boolean
+  pinned?: boolean
 }
 
 export interface NotebookDeletePreview {

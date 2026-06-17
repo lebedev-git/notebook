@@ -44,6 +44,17 @@ export default function NotebooksPage() {
     )
   }, [archivedNotebooks, normalizedQuery])
 
+  const pinnedActive = useMemo(() => {
+    if (!filteredActive) return undefined
+    return filteredActive.filter((notebook) => notebook.pinned)
+  }, [filteredActive])
+
+  const unpinnedActive = useMemo(() => {
+    if (!filteredActive) return undefined
+    return filteredActive.filter((notebook) => !notebook.pinned)
+  }, [filteredActive])
+
+  const hasPinned = (pinnedActive?.length ?? 0) > 0
   const hasArchived = (archivedNotebooks?.length ?? 0) > 0
   const isSearching = normalizedQuery.length > 0
 
@@ -77,15 +88,27 @@ export default function NotebooksPage() {
         </div>
         
         <div className="space-y-8">
-          <NotebookList 
-            notebooks={filteredActive} 
-            isLoading={isLoading}
-            title={t('notebooks.activeNotebooks')}
-            emptyTitle={isSearching ? t('common.noMatches') : undefined}
-            emptyDescription={isSearching ? t('common.tryDifferentSearch') : undefined}
-            onAction={!isSearching ? () => setCreateDialogOpen(true) : undefined}
-            actionLabel={!isSearching ? t('notebooks.newNotebook') : undefined}
-          />
+          {hasPinned && (
+            <NotebookList 
+              notebooks={pinnedActive} 
+              isLoading={isLoading}
+              title={t('notebooks.pinnedNotebooks')}
+              emptyTitle={isSearching ? t('common.noMatches') : undefined}
+              emptyDescription={isSearching ? t('common.tryDifferentSearch') : undefined}
+            />
+          )}
+
+          {(!hasPinned || (unpinnedActive && unpinnedActive.length > 0) || isLoading) && (
+            <NotebookList 
+              notebooks={unpinnedActive} 
+              isLoading={isLoading}
+              title={t('notebooks.activeNotebooks')}
+              emptyTitle={isSearching ? t('common.noMatches') : undefined}
+              emptyDescription={isSearching ? t('common.tryDifferentSearch') : undefined}
+              onAction={!isSearching && !hasPinned ? () => setCreateDialogOpen(true) : undefined}
+              actionLabel={!isSearching && !hasPinned ? t('notebooks.newNotebook') : undefined}
+            />
+          )}
           
           {hasArchived && (
             <NotebookList 

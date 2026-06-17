@@ -260,6 +260,9 @@ export const ruRU = {
     createSuccess: "Блокнот успешно создан",
     updateSuccess: "Блокнот успешно обновлён",
     deleteSuccess: "Блокнот успешно удалён",
+    pin: "Закрепить",
+    unpin: "Открепить",
+    pinnedNotebooks: "Закрепленные блокноты",
   },
   sources: {
     title: "Источники",

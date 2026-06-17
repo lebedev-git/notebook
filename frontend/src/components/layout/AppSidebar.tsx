@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useSidebarStore } from '@/lib/stores/sidebar-store'
 import { useCreateDialogs } from '@/lib/hooks/use-create-dialogs'
+import { useNotebooks } from '@/lib/hooks/use-notebooks'
 import {
   Tooltip,
   TooltipContent,
@@ -41,6 +42,7 @@ import {
   Plus,
   Wrench,
   Command,
+  Pin,
 } from 'lucide-react'
 
 const getNavigation = (t: TFunction) => [
@@ -83,6 +85,9 @@ export function AppSidebar() {
   const { logout } = useAuth()
   const { isCollapsed, toggleCollapse } = useSidebarStore()
   const { openSourceDialog, openNotebookDialog, openPodcastDialog } = useCreateDialogs()
+
+  const { data: notebooks } = useNotebooks(false)
+  const pinnedNotebooks = notebooks?.filter((nb) => nb.pinned) ?? []
 
   const [createMenuOpen, setCreateMenuOpen] = useState(false)
   const [isMac, setIsMac] = useState(true) // Default to Mac for SSR
@@ -239,6 +244,66 @@ export function AppSidebar() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+
+          {/* Pinned Notebooks Section (Expanded) */}
+          {!isCollapsed && pinnedNotebooks.length > 0 && (
+            <div className="mb-4">
+              <h3 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/60 flex items-center gap-1.5">
+                <Pin className="h-3.5 w-3.5 text-amber-500 fill-current rotate-45" />
+                <span className="truncate">{t('notebooks.pinnedNotebooks')}</span>
+              </h3>
+              <div className="space-y-1">
+                {pinnedNotebooks.map((notebook) => {
+                  const isActive = pathname === `/notebooks/${encodeURIComponent(notebook.id)}`
+                  return (
+                    <Link key={notebook.id} href={`/notebooks/${encodeURIComponent(notebook.id)}`}>
+                      <Button
+                        variant={isActive ? 'secondary' : 'ghost'}
+                        className={cn(
+                          'w-full gap-3 text-sidebar-foreground sidebar-menu-item justify-start px-3 h-9',
+                          isActive && 'bg-sidebar-accent text-sidebar-accent-foreground'
+                        )}
+                      >
+                        <Book className="h-4 w-4 shrink-0 text-amber-500/70" />
+                        <span className="truncate">{notebook.name}</span>
+                      </Button>
+                    </Link>
+                  )
+                })}
+              </div>
+              <Separator className="mt-4" />
+            </div>
+          )}
+
+          {/* Pinned Notebooks Section (Collapsed) */}
+          {isCollapsed && pinnedNotebooks.length > 0 && (
+            <div className="mb-4 flex flex-col items-center gap-1.5 border-b border-sidebar-border pb-3">
+              {pinnedNotebooks.map((notebook) => {
+                const isActive = pathname === `/notebooks/${encodeURIComponent(notebook.id)}`
+                const firstLetter = notebook.name.trim().charAt(0).toUpperCase() || 'N'
+                return (
+                  <Tooltip key={notebook.id}>
+                    <TooltipTrigger asChild>
+                      <Link href={`/notebooks/${encodeURIComponent(notebook.id)}`}>
+                        <Button
+                          variant={isActive ? 'secondary' : 'ghost'}
+                          className={cn(
+                            'h-8 w-8 rounded-full p-0 flex items-center justify-center font-bold text-xs border border-dashed transition-all duration-200',
+                            isActive 
+                              ? 'bg-amber-500/20 text-amber-600 border-amber-500/50 hover:bg-amber-500/30' 
+                              : 'text-sidebar-foreground border-sidebar-border hover:bg-sidebar-accent hover:border-amber-500/30'
+                          )}
+                        >
+                          {firstLetter}
+                        </Button>
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">{notebook.name}</TooltipContent>
+                  </Tooltip>
+                )
+              })}
+            </div>
+          )}
 
           {navigation.map((section, index) => (
             <div key={section.title}>

@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 class NotebookCreate(BaseModel):
     name: str = Field(..., description="Name of the notebook")
     description: str = Field(default="", description="Description of the notebook")
+    pinned: Optional[bool] = Field(default=False, description="Whether the notebook is pinned")
 
 
 class NotebookUpdate(BaseModel):
@@ -15,6 +16,9 @@ class NotebookUpdate(BaseModel):
     archived: Optional[bool] = Field(
         None, description="Whether the notebook is archived"
     )
+    pinned: Optional[bool] = Field(
+        None, description="Whether the notebook is pinned"
+    )
 
 
 class NotebookResponse(BaseModel):
@@ -22,6 +26,7 @@ class NotebookResponse(BaseModel):
     name: str
     description: str
     archived: bool
+    pinned: bool
     created: str
     updated: str
     source_count: int

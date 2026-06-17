@@ -70,6 +70,7 @@ async def get_notebooks(
                 name=nb.get("name", ""),
                 description=nb.get("description", ""),
                 archived=nb.get("archived", False),
+                pinned=nb.get("pinned", False),
                 created=str(nb.get("created", "")),
                 updated=str(nb.get("updated", "")),
                 source_count=nb.get("source_count", 0),
@@ -93,6 +94,7 @@ async def create_notebook(notebook: NotebookCreate):
         new_notebook = Notebook(
             name=notebook.name,
             description=notebook.description,
+            pinned=notebook.pinned or False,
         )
         await new_notebook.save()
 
@@ -101,6 +103,7 @@ async def create_notebook(notebook: NotebookCreate):
             name=new_notebook.name,
             description=new_notebook.description,
             archived=new_notebook.archived or False,
+            pinned=new_notebook.pinned or False,
             created=str(new_notebook.created),
             updated=str(new_notebook.updated),
             source_count=0,  # New notebook has no sources
@@ -166,6 +169,7 @@ async def get_notebook(notebook_id: str):
             name=nb.get("name", ""),
             description=nb.get("description", ""),
             archived=nb.get("archived", False),
+            pinned=nb.get("pinned", False),
             created=str(nb.get("created", "")),
             updated=str(nb.get("updated", "")),
             source_count=nb.get("source_count", 0),
@@ -195,6 +199,8 @@ async def update_notebook(notebook_id: str, notebook_update: NotebookUpdate):
             notebook.description = notebook_update.description
         if notebook_update.archived is not None:
             notebook.archived = notebook_update.archived
+        if notebook_update.pinned is not None:
+            notebook.pinned = notebook_update.pinned
 
         await notebook.save()
 
@@ -214,6 +220,7 @@ async def update_notebook(notebook_id: str, notebook_update: NotebookUpdate):
                 name=nb.get("name", ""),
                 description=nb.get("description", ""),
                 archived=nb.get("archived", False),
+                pinned=nb.get("pinned", False),
                 created=str(nb.get("created", "")),
                 updated=str(nb.get("updated", "")),
                 source_count=nb.get("source_count", 0),
@@ -226,6 +233,7 @@ async def update_notebook(notebook_id: str, notebook_update: NotebookUpdate):
             name=notebook.name,
             description=notebook.description,
             archived=notebook.archived or False,
+            pinned=notebook.pinned or False,
             created=str(notebook.created),
             updated=str(notebook.updated),
             source_count=0,

@@ -690,8 +690,9 @@ async def discover_openai_compatible_models() -> List[DiscoveredModel]:
             )
             response.raise_for_status()
             data = response.json()
+            model_list = data if isinstance(data, list) else data.get("data", [])
 
-            for model in data.get("data", []):
+            for model in model_list:
                 model_id = model.get("id", "")
                 if model_id:
                     # Classify based on model name patterns

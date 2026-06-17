@@ -18,6 +18,7 @@ class Notebook(ObjectModel):
     name: str
     description: str
     archived: Optional[bool] = False
+    pinned: Optional[bool] = False
 
     @field_validator("name")
     @classmethod

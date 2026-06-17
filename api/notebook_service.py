@@ -26,6 +26,7 @@ class NotebookService:
                 name=nb_data["name"],
                 description=nb_data["description"],
                 archived=nb_data["archived"],
+                pinned=nb_data.get("pinned", False),
             )
             nb.id = nb_data["id"]
             nb.created = nb_data["created"]
@@ -41,6 +42,7 @@ class NotebookService:
             name=nb_data["name"],
             description=nb_data["description"],
             archived=nb_data["archived"],
+            pinned=nb_data.get("pinned", False),
         )
         nb.id = nb_data["id"]
         nb.created = nb_data["created"]
@@ -55,6 +57,7 @@ class NotebookService:
             name=nb_data["name"],
             description=nb_data["description"],
             archived=nb_data["archived"],
+            pinned=nb_data.get("pinned", False),
         )
         nb.id = nb_data["id"]
         nb.created = nb_data["created"]
@@ -67,6 +70,7 @@ class NotebookService:
             "name": notebook.name,
             "description": notebook.description,
             "archived": notebook.archived,
+            "pinned": notebook.pinned,
         }
         response = api_client.update_notebook(notebook.id or "", **updates)
         nb_data = response if isinstance(response, dict) else response[0]
@@ -74,6 +78,7 @@ class NotebookService:
         notebook.name = nb_data["name"]
         notebook.description = nb_data["description"]
         notebook.archived = nb_data["archived"]
+        notebook.pinned = nb_data.get("pinned", False)
         notebook.updated = nb_data["updated"]
         return notebook
 
